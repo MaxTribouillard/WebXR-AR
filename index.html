@@ -27,7 +27,7 @@
         // camera.setCameraPoseMode(ZapparBabylon.CameraPoseMode.Attitude);
 
         const instantWorldTracker = new ZapparBabylon.InstantWorldTracker();
-        instantWorldTracker.setAnchorPoseFromCameraOffset(0, 0, 0);
+        instantWorldTracker.setAnchorPoseFromCameraOffset(0, 0, -5);
         const trackerTransformNode = new ZapparBabylon.InstantWorldAnchorTransformNode('tracker', camera, instantWorldTracker, scene);
 
         const assetsManager = new BABYLON.AssetsManager(scene);
@@ -59,12 +59,43 @@
             // Lancer le rendu Babylon après le démarrage caméra
             engine.runRenderLoop(() => {
                 camera.updateFrame();
-                instantWorldTracker.setAnchorPoseFromCameraOffset(0,0,0);
+                instantWorldTracker.setAnchorPoseFromCameraOffset(0,0,-5);
                 scene.render();
             });
 
             // Cacher le bouton
             document.getElementById("startAR").style.display = "none";
+
+            let selectedMesh = null;
+            let touchStartPosition = null;
+
+            // Activer les pickers sur le canvas
+            canvas.addEventListener('pointerdown', (event) => {
+                const pickResult = scene.pick(scene.pointerX, scene.pointerY);
+                if (pickResult.hit && pickResult.pickedMesh) {
+                    selectedMesh = pickResult.pickedMesh;
+                    touchStartPosition = { x: event.clientX, y: event.clientY };
+                }
+            });
+
+            canvas.addEventListener('pointermove', (event) => {
+                if (!selectedMesh || !touchStartPosition) return;
+
+                // Calcul du déplacement en pixels
+                const dx = event.clientX - touchStartPosition.x;
+                const dz = event.clientY - touchStartPosition.y;
+
+                // Conversion simple en offset dans le monde AR
+                selectedMesh.position.x += dx * 0.001; // ajuster facteur selon ton besoin
+                selectedMesh.position.z += dz * 0.001;
+
+                touchStartPosition = { x: event.clientX, y: event.clientY };
+            });
+
+            canvas.addEventListener('pointerup', () => {
+                selectedMesh = null;
+                touchStartPosition = null;
+            });
         };
 </script>
 
