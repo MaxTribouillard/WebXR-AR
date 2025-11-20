@@ -23,7 +23,7 @@
 
 
         const camera = new ZapparBabylon.Camera('camera', scene);
-        zapparCamera.setCameraPoseMode(ZapparBabylon.CameraPoseMode.Attitude);
+        camera.setCameraPoseMode(ZapparBabylon.CameraPoseMode.Attitude);
 
         ZapparBabylon.permissionRequestUI().then(granted => {
             if (granted) {
