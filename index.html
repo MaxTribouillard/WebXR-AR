@@ -35,11 +35,10 @@
             }
         });
 
-        // --- TRACKER AR ---
-        const tracker = new ZapparBabylon.InstantTrackerLoader().load();
-        const trackerAnchor = new ZapparBabylon.InstantAnchor(scene, tracker);
-        tracker.setAnchorPoseFromCameraOffset(0, 0, 1);
-
+        const instantWorldTracker = new ZapparBabylon.InstantWorldTracker();
+        instantWorldTracker.setAnchorPoseFromCameraOffset(0, 0, -5);
+        const trackerTransformNode = new ZapparBabylon.InstantWorldAnchorTransformNode('tracker', camera, instantWorldTracker, scene);
+        
         // --- CHARGER LE GLB (méthode moderne) ---
         const loadModel = async () => {
             const container = await SceneLoader.LoadAssetContainerAsync(
@@ -49,7 +48,7 @@
             );
 
             // Ajout au tracker Zappar (AR)
-            container.meshes.forEach(m => m.parent = trackerAnchor);
+            container.meshes.forEach(m => m.parent = trackerTransformNode);
 
             // Ajout de tout le container à la scène
             container.addAllToScene();
@@ -58,6 +57,8 @@
         loadModel();
 
         engine.runRenderLoop(() => {
+            camera.updateFrame();
+            instantWorldTracker.setAnchorPoseFromCameraOffset(0, 0, -5);
             scene.render();
         });
 
