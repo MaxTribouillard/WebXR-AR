@@ -10,9 +10,13 @@
 <body>
     <script>
 
-        const canvas = document.getElementById("renderCanvas");
-        const engine = new Engine(canvas, true);
-        const scene = new Scene(engine);
+        const canvasHolder = document.querySelector('#canvas-holder') || document.createElement('div');
+const canvas = document.createElement('canvas');
+canvasHolder.appendChild(canvas);
+
+const engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
+const scene = new BABYLON.Scene(engine);
+const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
 
         ZapparBabylon.init(); // nécessaire
 
