@@ -43,7 +43,7 @@
         const assetsManager = new BABYLON.AssetsManager(scene);
 
         // Charger modèle GLB
-        const meshTask = assetsManager.addMeshTask("loadGLB", "", "/", "model.glb");
+        const meshTask = assetsManager.addMeshTask("loadGLB", "", "model/model.glb", "model.glb");
 
         meshTask.onSuccess = function(task) {
             task.loadedMeshes.forEach(m => m.parent = trackerTransformNode);
