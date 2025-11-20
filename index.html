@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebXR AR Test</title>
     <script src="https://cdn.jsdelivr.net/npm/babylonjs@8.38.0/babylon.min.js"></script>
-    <script src="https://libs.zappar.com/zappar-babylon/*/zappar-babylon.js"></script>
+    <script src="https://libs.zappar.com/zappar-babylonjs/4.1.0/zappar-babylonjs.js"></script>
 </head>
 <body>
+    <canvas id="renderCanvas" style="width:100%; height:100vh;"></canvas>
+
     <script>
 
         const canvasHolder = document.querySelector('#canvas-holder') || document.createElement('div');
