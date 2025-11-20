@@ -9,6 +9,9 @@
     <script src="zappar/zappar-babylon.js"></script>
 </head>
 <body>
+    <button id="startAR" style="position: absolute; z-index: 10; top: 20px; left: 20px;">
+    Démarrer AR
+</button>
     <canvas id="renderCanvas" style="width:100%; height:100vh;"></canvas>
 
     <script>
@@ -25,15 +28,19 @@
         const camera = new ZapparBabylon.Camera('camera', scene);
         // camera.setCameraPoseMode(ZapparBabylon.CameraPoseMode.Attitude);
 
-        ZapparBabylon.permissionRequestUI().then(granted => {
-            if (granted) {
-                // User granted the permissions so start the camera
-                camera.start();
-            } else {
-                // User denied the permissions so show Zappar's built-in 'permission denied' UI
-                ZapparBabylon.permissionDeniedUI();
-            }
-        });
+        document.getElementById("startAR").onclick = () => {
+    zapparCamera.start();   // ❤️ obligatoire sur iPhone
+};
+
+        // ZapparBabylon.permissionRequestUI().then(granted => {
+        //     if (granted) {
+        //         // User granted the permissions so start the camera
+        //         camera.start();
+        //     } else {
+        //         // User denied the permissions so show Zappar's built-in 'permission denied' UI
+        //         ZapparBabylon.permissionDeniedUI();
+        //     }
+        // });
 
         const instantWorldTracker = new ZapparBabylon.InstantWorldTracker();
         instantWorldTracker.setAnchorPoseFromCameraOffset(0, 0, -5);
