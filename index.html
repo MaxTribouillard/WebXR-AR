@@ -16,9 +16,7 @@
 
     <script>
 
-        const canvasHolder = document.querySelector('#canvas-holder') || document.createElement('div');
-        const canvas = document.createElement('canvas');
-        canvasHolder.appendChild(canvas);
+        const canvas = document.getElementById('renderCanvas');
 
         const engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
         const scene = new BABYLON.Scene(engine);
@@ -27,20 +25,6 @@
 
         const camera = new ZapparBabylon.Camera('camera', scene);
         // camera.setCameraPoseMode(ZapparBabylon.CameraPoseMode.Attitude);
-
-        document.getElementById("startAR").onclick = () => {
-        camera.start();   // ❤️ obligatoire sur iPhone
-        };
-
-        // ZapparBabylon.permissionRequestUI().then(granted => {
-        //     if (granted) {
-        //         // User granted the permissions so start the camera
-        //         camera.start();
-        //     } else {
-        //         // User denied the permissions so show Zappar's built-in 'permission denied' UI
-        //         ZapparBabylon.permissionDeniedUI();
-        //     }
-        // });
 
         const instantWorldTracker = new ZapparBabylon.InstantWorldTracker();
         instantWorldTracker.setAnchorPoseFromCameraOffset(0, 0, -5);
@@ -61,11 +45,28 @@
 
         assetsManager.load();
 
-        engine.runRenderLoop(() => {
-            camera.updateFrame();
-            instantWorldTracker.setAnchorPoseFromCameraOffset(0, 0, -5);
-            scene.render();
-        });
+        // BOUTON START AR
+        document.getElementById("startAR").onclick = async () => {
+            const granted = await ZapparBabylon.permissionRequestUI();
+            if (!granted) {
+                ZapparBabylon.permissionDeniedUI();
+                return;
+            }
+
+            // Démarrage caméra
+            camera.start();
+
+            // Lancer le rendu Babylon après le démarrage caméra
+            engine.runRenderLoop(() => {
+                camera.updateFrame();
+                instantWorldTracker.setAnchorPoseFromCameraOffset(0,0,-5);
+                scene.render();
+            });
+
+            // Cacher le bouton
+            document.getElementById("startAR").style.display = "none";
+        };
+</script>
 
     </script>
 </body>
