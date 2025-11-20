@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebXR AR Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/babylonjs@8.38.0/babylon.min.js"></script>
+    <script src="https://libs.zappar.com/zappar-babylon/*/zappar-babylon.js"></script>
+</head>
+<body>
+    <script>
+
+        const canvas = document.getElementById("renderCanvas");
+        const engine = new Engine(canvas, true);
+        const scene = new Scene(engine);
+
+        ZapparBabylon.init(); // nécessaire
+
+        const camera = new ZapparBabylon.Camera('camera', scene);
+        zapparCamera.setCameraPoseMode(ZapparBabylon.CameraPoseMode.Attitude);
+
+        ZapparBabylon.permissionRequestUI().then(granted => {
+            if (granted) {
+                // User granted the permissions so start the camera
+                camera.start();
+            } else {
+                // User denied the permissions so show Zappar's built-in 'permission denied' UI
+                ZapparBabylon.permissionDeniedUI();
+            }
+        });
+
+        // --- TRACKER AR ---
+        const tracker = new ZapparBabylon.InstantTrackerLoader().load();
+        const trackerAnchor = new ZapparBabylon.InstantAnchor(scene, tracker);
+        tracker.setAnchorPoseFromCameraOffset(0, 0, 1);
+
+        // --- CHARGER LE GLB (méthode moderne) ---
+        const loadModel = async () => {
+            const container = await SceneLoader.LoadAssetContainerAsync(
+                "",             // chemin ou "" si root
+                "model.glb",     // ton fichier glb
+                scene
+            );
+
+            // Ajout au tracker Zappar (AR)
+            container.meshes.forEach(m => m.parent = trackerAnchor);
+
+            // Ajout de tout le container à la scène
+            container.addAllToScene();
+        };
+
+        loadModel();
+
+        engine.runRenderLoop(() => {
+            scene.render();
+        });
+
+    </script>
+</body>
+</html>
