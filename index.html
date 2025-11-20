@@ -40,22 +40,20 @@
         instantWorldTracker.setAnchorPoseFromCameraOffset(0, 0, -5);
         const trackerTransformNode = new ZapparBabylon.InstantWorldAnchorTransformNode('tracker', camera, instantWorldTracker, scene);
 
-        // --- CHARGER LE GLB (méthode moderne) ---
-        const loadModel = async () => {
-            const container = await SceneLoader.LoadAssetContainerAsync(
-                "",             // chemin ou "" si root
-                "model.glb",     // ton fichier glb
-                scene
-            );
+        const assetsManager = new BABYLON.AssetsManager(scene);
 
-            // Ajout au tracker Zappar (AR)
-            container.meshes.forEach(m => m.parent = trackerTransformNode);
+        // Charger modèle GLB
+        const meshTask = assetsManager.addMeshTask("loadGLB", "", "/", "model.glb");
 
-            // Ajout de tout le container à la scène
-            container.addAllToScene();
+        meshTask.onSuccess = function(task) {
+            task.loadedMeshes.forEach(m => m.parent = trackerTransformNode);
         };
 
-        loadModel();
+        meshTask.onError = function(task, message) {
+            console.error("Erreur de GLB:", message);
+        };
+
+        assetsManager.load();
 
         engine.runRenderLoop(() => {
             camera.updateFrame();
