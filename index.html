@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebXR AR Test</title>
-    <script src="https://cdn.jsdelivr.net/npm/babylonjs@8.40.1/babylon.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/babylonjs-loaders@8.40.1/babylonjs.loaders.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/babylonjs-serializers@8.40.1/babylonjs.serializers.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/babylonjs@8.34.0/babylon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/babylonjs-loaders@8.34.0/babylonjs.loaders.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/babylonjs-serializers@8.34.0/babylonjs.serializers.min.js"></script>
 
 </head>
 <body>
@@ -33,17 +33,7 @@ var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), s
 
         async function loadModel() {
             try {
-                console.log("Chargement du modèle GLB...");
-                
-                // Vérifier que le loader GLTF est disponible
-                if (!BABYLON.SceneLoader.IsPluginForExtensionAvailable(".glb")) {
-                    console.error("Le plugin GLB/GLTF n'est pas disponible");
-                    return;
-                }
-                
-                // Charger le modèle GLB
-                // const result = await BABYLON.SceneLoader.ImportMeshAsync("", "https://web-xr-ar.vercel.app/", "modelo.glb", scene);
-                const resultt = await BABYLON.ImportMeshAsync("https://web-xr-ar.vercel.app/modelo.glb", scene);
+                const result = await BABYLON.ImportMeshAsync("https://web-xr-ar.vercel.app/modelo.glb", scene);
                 console.log("Modèle importé avec succès:", result);
                 
             } catch (error) {
