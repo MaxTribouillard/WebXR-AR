@@ -29,7 +29,7 @@ var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), s
         async function loadModel() {
             try {
                 // Importer le modèle GLB dans la scène
-                const result = await BABYLON.SceneLoader.ImportMeshAsync("", "https://web-xr-ar.vercel.app/", "modelo.glb", scene);
+                const result = await BABYLON.ImportMeshAsync("https://web-xr-ar.vercel.app/", scene);
                 console.log("Modèle importé avec succès:", result);
                 
                 // Optionnel: ajuster la position/échelle du modèle si nécessaire
