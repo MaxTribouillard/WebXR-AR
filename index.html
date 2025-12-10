@@ -38,7 +38,7 @@ var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), s
                 }
                 
                 // Charger le modèle GLB
-                const result = await BABYLON.SceneLoader.ImportMeshAsync("", "https://web-xr-ar.vercel.app/", "modelo.glb", scene);
+                // const result = await BABYLON.SceneLoader.ImportMeshAsync("", "https://web-xr-ar.vercel.app/", "modelo.glb", scene);
                 const resultt = await BABYLON.ImportMeshAsync("https://web-xr-ar.vercel.app/modelo.glb", scene);
                 console.log("Modèle importé avec succès:", result);
                 
