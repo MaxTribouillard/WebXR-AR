@@ -8,7 +8,9 @@
     <script src="https://cdn.jsdelivr.net/npm/babylonjs-loaders@8.40.1/babylonjs.loaders.min.js"></script>
 </head>
 <body>
-
+    <button id="usdz">
+Telecharger usdz
+    </button>
     <canvas id="renderCanvas" style="width:100%; height:100vh;"></canvas>
 
     <script>
@@ -74,6 +76,13 @@ var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), s
             engine.resize();
         });
 
+        document.getElementById("usdz").addEventListener("click", function () {
+            usdzExport()
+        })
+
+
     </script>
+
+
 </body>
 </html>
