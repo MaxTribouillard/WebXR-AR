@@ -39,37 +39,9 @@ var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), s
                 
                 // Charger le modèle GLB
                 const result = await BABYLON.SceneLoader.ImportMeshAsync("", "https://web-xr-ar.vercel.app/", "modelo.glb", scene);
+                const resultt = await BABYLON.ImportMeshAsync("https://web-xr-ar.vercel.app/modelo.glb", scene);
                 console.log("Modèle importé avec succès:", result);
                 
-                // Vérifier si des meshes ont été importés
-                if (result.meshes && result.meshes.length > 0) {
-                    console.log("Nombre de meshes importés:", result.meshes.length);
-                    
-                    // Traiter tous les meshes importés
-                    result.meshes.forEach((mesh, index) => {
-                        console.log(`Mesh ${index}:`, mesh.name);
-                    });
-                    
-                    // Positionner le mesh racine
-                    const rootMesh = result.meshes[0];
-                    if (rootMesh) {
-                        rootMesh.position = new BABYLON.Vector3(0, 0, 0);
-                        
-                        // Calculer la boîte englobante pour ajuster la caméra
-                        const boundingInfo = rootMesh.getBoundingInfo();
-                        if (boundingInfo) {
-                            const size = boundingInfo.boundingBox.maximum.subtract(boundingInfo.boundingBox.minimum);
-                            const maxDimension = Math.max(size.x, size.y, size.z);
-                            console.log("Taille du modèle:", size, "Max dimension:", maxDimension);
-                            
-                            // Ajuster la position de la caméra
-                            camera.position = new BABYLON.Vector3(0, maxDimension, maxDimension * 2);
-                            camera.setTarget(BABYLON.Vector3.Zero());
-                        }
-                    }
-                } else {
-                    console.warn("Aucun mesh trouvé dans le modèle");
-                }
             } catch (error) {
                 console.error("Erreur lors du chargement du modèle:", error);
                 console.log("Vérifiez que :");
