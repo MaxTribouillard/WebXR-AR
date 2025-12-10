@@ -28,18 +28,40 @@ var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), s
 
         async function loadModel() {
             try {
-                // Importer le modèle GLB dans la scène
-                const result = await BABYLON.ImportMeshAsync("https://web-xr-ar.vercel.app/modelo.glb", scene);
+                // Méthode 1: Utiliser SceneLoader.ImportMeshAsync avec les bons paramètres
+                console.log("Chargement du modèle...");
+                const result = await BABYLON.SceneLoader.ImportMeshAsync("", "https://web-xr-ar.vercel.app/", "modelo.glb", scene);
                 console.log("Modèle importé avec succès:", result);
                 
-                // Optionnel: ajuster la position/échelle du modèle si nécessaire
-                if (result.meshes.length > 0) {
+                // Vérifier si des meshes ont été importés
+                if (result.meshes && result.meshes.length > 0) {
+                    console.log("Nombre de meshes importés:", result.meshes.length);
                     const rootMesh = result.meshes[0];
                     rootMesh.position = new BABYLON.Vector3(0, 0, 0);
-                    // rootMesh.scaling = new BABYLON.Vector3(1, 1, 1); // Ajustez l'échelle si nécessaire
+                    
+                    // Calculer la boîte englobante pour ajuster la caméra
+                    const boundingInfo = rootMesh.getBoundingInfo();
+                    if (boundingInfo) {
+                        const size = boundingInfo.boundingBox.maximum.subtract(boundingInfo.boundingBox.minimum);
+                        const maxDimension = Math.max(size.x, size.y, size.z);
+                        camera.position = new BABYLON.Vector3(0, maxDimension, maxDimension * 2);
+                        camera.setTarget(BABYLON.Vector3.Zero());
+                    }
+                } else {
+                    console.warn("Aucun mesh trouvé dans le modèle");
                 }
             } catch (error) {
                 console.error("Erreur lors du chargement du modèle:", error);
+                
+                // Méthode alternative: essayer de charger directement l'URL complète
+                try {
+                    console.log("Tentative avec méthode alternative...");
+                    const result2 = await BABYLON.SceneLoader.ImportMeshAsync("", "", "https://web-xr-ar.vercel.app/modelo.glb", scene);
+                    console.log("Modèle importé avec méthode alternative:", result2);
+                } catch (error2) {
+                    console.error("Échec de la méthode alternative:", error2);
+                    console.log("Vérifiez que le fichier GLB est accessible et valide à l'URL: https://web-xr-ar.vercel.app/modelo.glb");
+                }
             }
         }
         
