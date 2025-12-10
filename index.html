@@ -26,16 +26,45 @@ var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), s
     camera.attachControl(canvas, true);
 
 
-        async function usdzExport () {
-            await BABYLON.ImportMeshAsync("https://web-xr-ar.vercel.app/modelo.glb", scene)
-
-            const data = await BABYLON.USDZExportAsync(scene);
-            
-            BABYLON.Tools.Download(new Blob([data], {type: 'model/vnd.usdz+zip'}), "scene.usdz");
+        async function loadModel() {
+            try {
+                // Importer le modèle GLB dans la scène
+                const result = await BABYLON.SceneLoader.ImportMeshAsync("", "https://web-xr-ar.vercel.app/", "modelo.glb", scene);
+                console.log("Modèle importé avec succès:", result);
+                
+                // Optionnel: ajuster la position/échelle du modèle si nécessaire
+                if (result.meshes.length > 0) {
+                    const rootMesh = result.meshes[0];
+                    rootMesh.position = new BABYLON.Vector3(0, 0, 0);
+                    // rootMesh.scaling = new BABYLON.Vector3(1, 1, 1); // Ajustez l'échelle si nécessaire
+                }
+            } catch (error) {
+                console.error("Erreur lors du chargement du modèle:", error);
+            }
         }
         
-        usdzExport();
-</script>
+        // Charger le modèle
+        loadModel();
+        
+        // Fonction d'export USDZ (optionnelle)
+        async function usdzExport() {
+            try {
+                const data = await BABYLON.USDZExportAsync(scene);
+                BABYLON.Tools.Download(new Blob([data], {type: 'model/vnd.usdz+zip'}), "scene.usdz");
+            } catch (error) {
+                console.error("Erreur lors de l'export USDZ:", error);
+            }
+        }
+
+        // Démarrer le rendu
+        engine.runRenderLoop(() => {
+            scene.render();
+        });
+
+        // Gérer le redimensionnement de la fenêtre
+        window.addEventListener("resize", () => {
+            engine.resize();
+        });
 
     </script>
 </body>
