@@ -19,42 +19,54 @@ Telecharger usdz
 <canvas id="renderCanvas" style="width:100%; height:100vh;"></canvas>
 
     <script>
-        const canvas = document.getElementById("renderCanvas");
-        const engine = new BABYLON.Engine(canvas, true);
+    const canvas = document.getElementById("renderCanvas");
+    const engine = new BABYLON.Engine(canvas, true);
 
-        const createScene = async function () {
-            const scene = new BABYLON.Scene(engine);
-            
-            // Une caméra par défaut est nécessaire avant d'entrer en XR
-            const camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+    const createScene = async function () {
+        const scene = new BABYLON.Scene(engine);
+        
+        // 1. Lumière et Caméra de base (obligatoires pour voir quelque chose)
+        const camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 10, BABYLON.Vector3.Zero(), scene);
+        camera.attachControl(canvas, true);
+        const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
 
-            // Chargement du modèle
-            const baseUrl = "https://maxtribouillard.github.io/WebXR-AR/";
-            const fileName = "LEO_009%20-%202026%20-%20PROJET0008%20-%20PROP01.babylon";
+        const baseUrl = "https://maxtribouillard.github.io/WebXR-AR/";
+        const fileName = "LEO_009%20-%202026%20-%20PROJET0008%20-%20PROP01.babylon";
 
-            BABYLON.SceneLoader.Append(baseUrl, fileName, scene, async function () {
-                // On récupère le sol pour la téléportation
-                let ground = scene.getMeshByName("ground");
-                
-                // Configuration XR
-                const xr = await scene.createDefaultXRExperienceAsync({
-                    floorMeshes: ground ? [ground] : [] 
-                });
+        try {
+            // 2. Utiliser la version Async de Append pour être sûr de l'ordre d'exécution
+            await BABYLON.SceneLoader.AppendAsync(baseUrl, fileName, scene);
+            console.log("Chargement terminé !");
 
-                console.log("Mode XR prêt !");
+            // 3. Ajustement automatique de la caméra au modèle chargé
+            scene.createDefaultCameraOrLight(true, true, true);
+            scene.activeCamera.attachControl(canvas, true);
+
+            // 4. Configuration XR
+            const ground = scene.getMeshByName("ground");
+            const xr = await scene.createDefaultXRExperienceAsync({
+                floorMeshes: ground ? [ground] : [] 
             });
+            console.log("Mode XR prêt !");
 
-            return scene;
-        };
+        } catch (err) {
+            console.error("Erreur lors du chargement :", err);
+        }
 
-        // Initialisation et boucle de rendu
-        createScene().then(scene => {
-            engine.runRenderLoop(function () {
+        return scene;
+    };
+
+    // Initialisation
+    createScene().then(scene => {
+        engine.runRenderLoop(function () {
+            if (scene) {
                 scene.render();
-            });
+            }
         });
+    });
 
-    </script>
+    window.addEventListener("resize", () => engine.resize());
+</script>
 
 
 </body>
