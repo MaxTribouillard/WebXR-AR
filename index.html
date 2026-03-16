@@ -27,11 +27,6 @@ Telecharger usdz
             
             // Une caméra par défaut est nécessaire avant d'entrer en XR
             const camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
-            camera.setTarget(BABYLON.Vector3.Zero());
-            camera.attachControl(canvas, true);
-
-            // Lumière basique (importante si ton modèle n'en a pas d'intégrée)
-            const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
 
             // Chargement du modèle
             const baseUrl = "https://maxtribouillard.github.io/WebXR-AR/";
