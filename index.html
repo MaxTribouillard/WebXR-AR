@@ -10,74 +10,57 @@
 
 </head>
 <body>
-<a href="intent://arvr.google.com/scene-viewer/1.0?file=https://web-xr-ar.vercel.app/model.glb&mode=ar_preferred#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;end;">
+<!-- <a href="intent://arvr.google.com/scene-viewer/1.0?file=https://web-xr-ar.vercel.app/model.glb&mode=ar_preferred#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;end;">
     Voir en AR
-</a>
-<!-- 
+</a> -->
+
     <button id="usdz">
 Telecharger usdz
     </button> -->
-    <!-- <canvas id="renderCanvas" style="width:100%; height:100vh;"></canvas>
+<canvas id="renderCanvas" style="width:100%; height:100vh;"></canvas>
 
     <script>
+        const canvas = document.getElementById("renderCanvas");
+        const engine = new BABYLON.Engine(canvas, true);
 
-        const canvas = document.getElementById('renderCanvas');
+        const createScene = async function () {
+            const scene = new BABYLON.Scene(engine);
+            
+            // Une caméra par défaut est nécessaire avant d'entrer en XR
+            const camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+            camera.setTarget(BABYLON.Vector3.Zero());
+            camera.attachControl(canvas, true);
 
-        const engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
-        const scene = new BABYLON.Scene(engine);
-        const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
-var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+            // Lumière basique (importante si ton modèle n'en a pas d'intégrée)
+            const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
 
-    // This targets the camera to scene origin
-    camera.setTarget(BABYLON.Vector3.Zero());
+            // Chargement du modèle
+            const baseUrl = "https://vr.leonard-solutions.com/temp_Projet/888888/";
+            const fileName = "LEO_009%20-%202026%20-%20PROJET0009%20-%20PROP01.babylon";
 
-    // This attaches the camera to the canvas
-    camera.attachControl(canvas, true);
-
-
-        async function loadModel() {
-            try {
-                const result = await BABYLON.ImportMeshAsync("https://web-xr-ar.vercel.app/modelo.glb", scene);
-                console.log("Modèle importé avec succès:", result);
+            BABYLON.SceneLoader.Append(baseUrl, fileName, scene, async function () {
+                // On récupère le sol pour la téléportation
+                let ground = scene.getMeshByName("ground");
                 
-            } catch (error) {
-                console.error("Erreur lors du chargement du modèle:", error);
-                console.log("Vérifiez que :");
-                console.log("1. Le fichier GLB est accessible à l'URL: https://web-xr-ar.vercel.app/modelo.glb");
-                console.log("2. Le fichier GLB est valide et bien formaté");
-                console.log("3. Les headers CORS sont configurés correctement sur le serveur");
-            }
-        }
-        
-        // Charger le modèle
-        loadModel();
-        
-        // Fonction d'export USDZ (optionnelle)
-        async function usdzExport() {
-            try {
-                const data = await BABYLON.USDZExportAsync(scene);
-                BABYLON.Tools.Download(new Blob([data], {type: 'model/vnd.usdz+zip'}), "scene.usdz");
-            } catch (error) {
-                console.error("Erreur lors de l'export USDZ:", error);
-            }
-        }
+                // Configuration XR
+                const xr = await scene.createDefaultXRExperienceAsync({
+                    floorMeshes: ground ? [ground] : [] 
+                });
 
-        // Démarrer le rendu
-        engine.runRenderLoop(() => {
-            scene.render();
+                console.log("Mode XR prêt !");
+            });
+
+            return scene;
+        };
+
+        // Initialisation et boucle de rendu
+        createScene().then(scene => {
+            engine.runRenderLoop(function () {
+                scene.render();
+            });
         });
 
-        // Gérer le redimensionnement de la fenêtre
-        window.addEventListener("resize", () => {
-            engine.resize();
-        });
-
-        document.getElementById("usdz").addEventListener("click", function () {
-            usdzExport()
-        })
-
-
-    </script> -->
+    </script>
 
 
 </body>
